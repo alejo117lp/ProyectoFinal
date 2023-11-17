@@ -19,12 +19,17 @@ public class GameController : MonoBehaviour
     private GameObject richPrefab;
     [SerializeField]
     private GameObject CoinPrefab;
+    [SerializeField]
+    private GameObject CirclePrefab;
 
     private GameState State;
     private Dictionary<string, Transform> PlayersToRender;
     private Dictionary<string, Transform> CoinsToRender;
+    private Dictionary<string, Transform> CirclesToRender;
     private InputController inputController;
-    
+
+
+    public event Action OnRemoveFromCircles;
     private void Start()
     {
         inputController = FindObjectOfType<InputController>();
@@ -33,7 +38,7 @@ public class GameController : MonoBehaviour
     {
         PlayersToRender = new Dictionary<string, Transform>();
         CoinsToRender = new Dictionary<string, Transform>();
-
+        CirclesToRender = new Dictionary<string, Transform>();
         GameObject.Find("PanelConnect").SetActive(false);
         GameContainer.SetActive(true);
 
@@ -46,6 +51,15 @@ public class GameController : MonoBehaviour
         var Socket = NetworkController._Instance.Socket;
 
         InputController._Instance.onAxisChange += (axis) => { Socket.Emit("move", axis); };
+        InputController._Instance.OnSpellCast += () => { Socket.Emit("Cast", state.Players.FirstOrDefault(p =>p.type =="Rich") ); };
+        OnRemoveFromCircles += () => {
+            Player richPlayer = state.Players.FirstOrDefault(p => p.type == "Rich");
+            if (richPlayer != null)
+            {
+                Socket.Emit("Clear", richPlayer);
+            }
+        };
+
 
         State = state;
         Socket.On("updateState", UpdateState);
@@ -74,12 +88,11 @@ public class GameController : MonoBehaviour
     {
         GameStateData jsonData = JsonUtility.FromJson<GameStateData>(json);
         State = jsonData.State;
-
     }
 
     internal void NewPlayer(string id, string username, string type ,int lifes )
     {
-        InstantiatePlayer(new Player { Id = id, Username = username });
+            InstantiatePlayer(new Player { Id = id, Username = username });
     }
 
     void Update()
@@ -98,6 +111,19 @@ public class GameController : MonoBehaviour
                 }
               
             }
+            if(State.MagicCircles != null)
+            {
+                foreach (var circle in State.MagicCircles)
+                {
+                    if(State.Players.FirstOrDefault(p => p.type == "Rich").CanCast)
+                    {
+                        Debug.Log("circle in" + circle.x + "," + circle.y);
+                        InstantiateCircle(circle);
+                        
+                    }
+                }
+            }
+
             var plarersToDelete = PlayersToRender.Where(item => !State.Players.Any(player => player.Id == item.Key)).ToList();
             foreach (var playerItem in plarersToDelete)
             {
@@ -132,6 +158,13 @@ public class GameController : MonoBehaviour
         coinGameObject.GetComponent<GameCoin>().Id = coin.Id;
 
         CoinsToRender[coin.Id] = coinGameObject.transform;
+    }
+    private void InstantiateCircle(Circle circle)
+    {
+        GameObject circleGameObject = Instantiate(CirclePrefab, CoinsContainer);
+        circleGameObject.transform.position = new Vector2(circle.x, circle.y);
+        CirclesToRender.Add(circle.Id, circleGameObject.transform);
+        //circleGameObject.GetComponent<GameCoin>().Id = circle.Id;
     }
 }
 [Serializable]

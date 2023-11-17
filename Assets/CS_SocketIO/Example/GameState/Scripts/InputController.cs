@@ -11,6 +11,8 @@ public class InputController : MonoBehaviour
     public static InputController _Instance { get; set; }
     public event Action<Axis> onAxisChange;
 
+    public event Action OnSpellCast;
+
     private static Axis axis = new Axis { Horizontal = 0, Vertical =0};
     Axis LastAxis = new Axis { Horizontal = 0, Vertical =0};
 
@@ -44,6 +46,11 @@ public class InputController : MonoBehaviour
         {
             animator.SetBool("Moving", false);
         }
+        if (Input.GetButtonDown("Fire1"))
+        {
+            OnSpellCast?.Invoke();
+
+        }
     }
     public void Setplayer(Animator animator, SpriteRenderer playerSprite)
     {
@@ -54,7 +61,6 @@ public class InputController : MonoBehaviour
     {
         if (AxisChange())
         {
-            
             LastAxis = new Axis { Horizontal = axis.Horizontal, Vertical = axis.Vertical };
             //NetworkController._Instance.Socket.Emit("move", axis);
             onAxisChange?.Invoke(axis);

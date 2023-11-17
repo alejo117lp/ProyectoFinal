@@ -81,7 +81,7 @@ public class GameState
 {
     public Player[] Players;
     public Coin[] Coins;
-
+    public Circle[] MagicCircles;
 }
 [Serializable]
 public class Player
@@ -93,6 +93,8 @@ public class Player
     public int x;
     public int y;
     public int Score;
+    public bool CanCast;
+    public int CoolDown;
 }
 
 [Serializable]
@@ -101,4 +103,16 @@ public class Coin
     public string Id;
     public int x;
     public int y;
+}
+
+[Serializable]
+public class Circle
+{
+    public string Id;
+    public int x;
+    public int y;
+    public int Radius;
+    public int Damage;
+    public int Duration;
+    public int RemainingDuration;
 }
