@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class NetworkController : MonoBehaviour
 {
@@ -23,7 +24,6 @@ public class NetworkController : MonoBehaviour
 
     public void ConnectToServer()
     {
-
         Socket.Init(new JsonData { Username = Username });
 
         Socket.On("connect", onConnected);
@@ -31,20 +31,21 @@ public class NetworkController : MonoBehaviour
 
         Socket.On("welcome", (json) =>
         {
+            Debug.Log(json);
             JsonData jsonData = JsonUtility.FromJson<JsonData>(json);
-
             Debug.Log(jsonData.Message);
             foreach (var player in jsonData.State.Players)
             {
                 Debug.Log(player.Username);
-                
             }
             GameObject.Find("GameController").GetComponent<GameController>().StartGame(jsonData.State);                       
 
         });
         Socket.On("newPlayer", (json) => {
+            string username;
             JsonData jsonData = JsonUtility.FromJson<JsonData>(json);
-            GameObject.Find("GameController").GetComponent<GameController>().NewPlayer(jsonData.Id,jsonData.Username);
+            username = jsonData.Username;
+            GameObject.Find("GameController").GetComponent<GameController>().NewPlayer(jsonData.Id,jsonData.Username, jsonData.type,jsonData.State.Players.FirstOrDefault(p => p.Username == username).lifes);
         });
 
     }
@@ -68,6 +69,7 @@ public class NetworkController : MonoBehaviour
 [Serializable]
 public class JsonData
 {
+    public string type;
     public string Username;
     public string Id;
     public string Message;
@@ -84,6 +86,8 @@ public class GameState
 [Serializable]
 public class Player
 {
+    public int lifes;
+    public string type;
     public string Id;
     public string Username;
     public int x;

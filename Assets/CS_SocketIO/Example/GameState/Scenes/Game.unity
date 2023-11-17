@@ -420,6 +420,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Coin
       objectReference: {fileID: 0}
+    - target: {fileID: 667262961535983715, guid: 4c0cc2bc31d56b24c87cd5449f85befb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6309203081814678369, guid: 4c0cc2bc31d56b24c87cd5449f85befb, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -1136,7 +1140,8 @@ MonoBehaviour:
   GameContainer: {fileID: 118606695}
   PlayersContainer: {fileID: 960898697}
   CoinsContainer: {fileID: 924544537}
-  PlayerPrefab: {fileID: 667262961535983715, guid: 834778a1669aae848b8e96c79b23ced9, type: 3}
+  thiefPregab: {fileID: 667262961535983715, guid: 9645e26215edcf142babfe475239291c, type: 3}
+  richPrefab: {fileID: 667262961535983715, guid: b67a8553052606543a822ed0569188d0, type: 3}
   CoinPrefab: {fileID: 667262961535983715, guid: 4c0cc2bc31d56b24c87cd5449f85befb, type: 3}
 --- !u!4 &421584676
 Transform:
@@ -1165,6 +1170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e958a8973d014f4da0c6d1667087ba1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animator: {fileID: 0}
 --- !u!1 &486638373
 GameObject:
   m_ObjectHideFlags: 0
@@ -1705,7 +1711,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1809,7 +1815,7 @@ Transform:
   m_GameObject: {fileID: 960898696}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 118606696}
@@ -2615,7 +2621,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1354780815
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,13 +14,21 @@ public class GameController : MonoBehaviour
     private Transform CoinsContainer;
 
     [SerializeField]
-    private GameObject PlayerPrefab;
+    private GameObject thiefPregab;
+    [SerializeField]
+    private GameObject richPrefab;
     [SerializeField]
     private GameObject CoinPrefab;
 
     private GameState State;
     private Dictionary<string, Transform> PlayersToRender;
     private Dictionary<string, Transform> CoinsToRender;
+    private InputController inputController;
+    
+    private void Start()
+    {
+        inputController = FindObjectOfType<InputController>();
+    }
     internal void StartGame(GameState state)
     {
         PlayersToRender = new Dictionary<string, Transform>();
@@ -41,13 +49,20 @@ public class GameController : MonoBehaviour
 
         State = state;
         Socket.On("updateState", UpdateState);
-
-        
     }
 
     private void InstantiatePlayer(Player player)
     {
-        GameObject playerGameObject = Instantiate(PlayerPrefab, PlayersContainer);
+        GameObject playerGameObject;
+        if (player.type == "Rich")
+        {
+            playerGameObject = Instantiate(richPrefab, PlayersContainer);
+        }
+        else
+        {
+            playerGameObject = Instantiate(thiefPregab, PlayersContainer);
+        }
+        inputController.Setplayer(playerGameObject.GetComponent<Animator>(), playerGameObject.GetComponent<SpriteRenderer>());
         playerGameObject.transform.position = new Vector2(player.x, player.y);
         playerGameObject.GetComponent<GamePlayer>().Id = player.Id;
         playerGameObject.GetComponent<GamePlayer>().Username = player.Id;
@@ -62,7 +77,7 @@ public class GameController : MonoBehaviour
 
     }
 
-    internal void NewPlayer(string id, string username)
+    internal void NewPlayer(string id, string username, string type ,int lifes )
     {
         InstantiatePlayer(new Player { Id = id, Username = username });
     }
@@ -118,12 +133,7 @@ public class GameController : MonoBehaviour
 
         CoinsToRender[coin.Id] = coinGameObject.transform;
     }
-
-
-
-
 }
-
 [Serializable]
 public class GameStateData
 {

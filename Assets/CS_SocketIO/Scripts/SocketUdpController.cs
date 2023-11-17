@@ -97,7 +97,7 @@ public class SocketUdpController : MonoBehaviour
         switch (receivedMessage.Header)
         {
             case "connect":
-                Id = ((string)receivedMessage.Data);
+                    Id = ((string)receivedMessage.Data);
                 connected = true;
                 RunActions(receivedMessage);
                 break;
